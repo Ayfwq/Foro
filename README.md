@@ -35,7 +35,7 @@
 
 ```mermaid
 flowchart TB
-    C["客户端 / 接口调试"] --> G["hm-gateway :8080<br/>JWT 鉴权 · 动态路由"]
+    C["客户端 / 接口调试"] --> G["foro-gateway :8080<br/>JWT 鉴权 · 动态路由"]
 
     subgraph 业务服务
         G --> I["item-service :8081<br/>商品 · 库存"]
@@ -72,14 +72,14 @@ flowchart TB
 
 | 模块 | 端口 | 职责 |
 |---|---|---|
-| `hm-gateway` | 8080 | 统一入口。JWT 校验、白名单放行、用户 ID 透传（`user-info` 请求头）、路由表从 Nacos 动态加载 |
+| `foro-gateway` | 8080 | 统一入口。JWT 校验、白名单放行、用户 ID 透传（`user-info` 请求头）、路由表从 Nacos 动态加载 |
 | `item-service` | 8081 | 商品信息、分类与价格的多条件分页检索；库存查询与扣减 |
 | `cart-service` | 8082 | 购物车增删改查，按用户维度隔离，下单后清理已结算条目 |
 | `trade-service` | 8083 | 订单主表与明细、物流信息；创建订单、关闭订单、订单状态流转 |
 | `pay-service` | 8084 | 支付单生成与状态维护，支持微信、支付宝、余额三类渠道；支付结果通过 MQ 回传交易服务 |
 | `user-service` | 8085 | 登录签发 Token、用户信息、收货地址 |
-| `hm-api` | — | 服务间调用的契约层：Feign 客户端、DTO、降级工厂 |
-| `hm-common` | — | 公共能力：统一响应 `R`、分页对象、全局异常处理、用户上下文、MyBatis-Plus / MVC / MQ 配置 |
+| `foro-api` | — | 服务间调用的契约层：Feign 客户端、DTO、降级工厂 |
+| `foro-common` | — | 公共能力：统一响应 `R`、分页对象、全局异常处理、用户上下文、MyBatis-Plus / MVC / MQ 配置 |
 
 ## 技术栈
 
@@ -89,7 +89,7 @@ flowchart TB
 |---|---|---|
 | Spring Cloud Gateway | 2021.0.3 | 统一网关，路由转发与全局过滤器 |
 | Spring Security Crypto | — | 网关与用户服务共用 JWT 解析逻辑 |
-| JJWT + RSA 密钥库 | `hmall.jks` | 非对称签名，Token 有效期 30 分钟 |
+| JJWT + RSA 密钥库 | `foro.jks` | 非对称签名，Token 有效期 30 分钟 |
 | Knife4j（OpenAPI2） | — | 在线接口文档，各服务挂载在 `/doc.html` |
 
 > 本仓库为后端服务集合，前端（Web / 移动端）不在其中；接口可直接通过 Knife4j 页面调试。
@@ -178,18 +178,18 @@ sequenceDiagram
 
 | 数据库 | 核心表 |
 |---|---|
-| `hm-item` | `item`（商品：名称、价格、品牌、分类、库存、状态） |
-| `hm-cart` | `cart`（用户、商品、数量、价格快照） |
-| `hm-trade` | `order`、`order_detail`、`order_logistics` |
-| `hm-pay` | `pay_order`（业务订单号、支付渠道、金额、状态） |
-| `hm-user` | `user`、`address` |
+| `foro-item` | `item`（商品：名称、价格、品牌、分类、库存、状态） |
+| `foro-cart` | `cart`（用户、商品、数量、价格快照） |
+| `foro-trade` | `order`、`order_detail`、`order_logistics` |
+| `foro-pay` | `pay_order`（业务订单号、支付渠道、金额、状态） |
+| `foro-user` | `user`、`address` |
 
 订单状态：`1` 待支付、`2` 已支付、`5` 已关闭。
 
 ## 关键设计
 
 **1. 网关统一鉴权与身份透传**
-网关用公钥验签 JWT，解析出用户 ID 后写入 `user-info` 请求头，下游服务不再重复解析 Token；`hm-common` 的拦截器把该头部写入 `UserContext`（ThreadLocal），业务层直接读取当前用户。白名单（搜索、登录、商品详情、文档）在配置中维护，无需改代码。
+网关用公钥验签 JWT，解析出用户 ID 后写入 `user-info` 请求头，下游服务不再重复解析 Token；`foro-common` 的拦截器把该头部写入 `UserContext`（ThreadLocal），业务层直接读取当前用户。白名单（搜索、登录、商品详情、文档）在配置中维护，无需改代码。
 
 **2. 路由表动态化**
 路由不写死在 `application.yaml`，而是由 `DynamicRouteLoader` 监听 Nacos 的 `gateway-routes.json`，变更时增量重建 `RouteDefinition`，无需重启网关。
@@ -204,7 +204,7 @@ sequenceDiagram
 Feign 客户端通过 `fallbackFactory` 提供降级实现，下游异常时返回兜底数据而不阻断主链路；商品、支付的降级逻辑各自独立。
 
 **6. 统一契约**
-`hm-api` 只放 Feign 接口与 DTO，服务间不暴露实体类；`hm-common` 提供 `R`、`PageDTO` 与全局异常处理，所有接口的错误码与响应结构保持一致。
+`foro-api` 只放 Feign 接口与 DTO，服务间不暴露实体类；`foro-common` 提供 `R`、`PageDTO` 与全局异常处理，所有接口的错误码与响应结构保持一致。
 
 ## 快速开始
 
@@ -220,31 +220,31 @@ Feign 客户端通过 `fallbackFactory` 提供降级实现，下游异常时返�
 
 ### 启动步骤
 
-1. **初始化数据库**：创建 5 个库（`hm-item`、`hm-cart`、`hm-trade`、`hm-pay`、`hm-user`）并导入建表脚本。
+1. **初始化数据库**：创建 5 个库（`foro-item`、`foro-cart`、`foro-trade`、`foro-pay`、`foro-user`）并导入建表脚本。
 2. **配置 Nacos**：在 `DEFAULT_GROUP` 下建立共享配置（数据源、日志、Swagger、Sentinel、Feign、Seata、RabbitMQ 连接）与 `gateway-routes.json` 路由表。
 3. **修改注册中心地址**：各服务 `bootstrap.yml` 中的 `spring.cloud.nacos.server-addr` 指向自己的 Nacos 实例。
-4. **按顺序启动**：`hm-gateway` 之外的业务服务可并行启动，最后启动网关；网关启动时会拉取已注册的服务列表。
+4. **按顺序启动**：`foro-gateway` 之外的业务服务可并行启动，最后启动网关；网关启动时会拉取已注册的服务列表。
 5. **验证**：访问 `http://localhost:8080/doc.html` 查看聚合文档，或直接调用 `http://localhost:8080/search/list?key=手机`。
 
-> 网关的 JWT 密钥库随仓库提供（`hm-gateway/src/main/resources/hmall.jks`），仅供本地演示使用；部署到生产环境请替换为自有密钥并通过环境变量注入口令。
+> 网关的 JWT 密钥库随仓库提供（`foro-gateway/src/main/resources/foro.jks`），仅供本地演示使用；部署到生产环境请替换为自有密钥并通过环境变量注入口令。
 
 ## 目录结构
 
 ```
 foro/
-├── hm-gateway/               # 网关：鉴权、路由、跨域
-│   └── src/main/java/com/hmall/gateway/
+├── foro-gateway/               # 网关：鉴权、路由、跨域
+│   └── src/main/java/com/foro/gateway/
 │       ├── filters/          # AuthGlobalFilter 全局鉴权
 │       ├── routers/          # DynamicRouteLoader 动态路由
 │       └── config/           # JWT / 白名单配置
 ├── item-service/             # 商品服务
 ├── cart-service/             # 购物车服务
 ├── trade-service/            # 交易服务
-│   └── src/main/java/com/hmall/trade/listenter/   # 延迟关单、支付回调
+│   └── src/main/java/com/foro/trade/listenter/   # 延迟关单、支付回调
 ├── pay-service/              # 支付服务
 ├── user-service/             # 用户服务
-├── hm-api/                   # Feign 客户端 + DTO + 降级工厂
-├── hm-common/                # 统一响应、异常、拦截器、MyBatis/MQ 配置
+├── foro-api/                   # Feign 客户端 + DTO + 降级工厂
+├── foro-common/                # 统一响应、异常、拦截器、MyBatis/MQ 配置
 └── pom.xml                   # 聚合 POM，统一版本管理
 ```
 

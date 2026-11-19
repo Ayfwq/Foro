@@ -5,15 +5,11 @@
 
 /note/
 
-/hm-service/target/
-/hm-service/src/test/
-/hm-service/src/main/resources/application-dev.yaml
-/hm-service/src/main/resources/application-local.yaml
 
-/hm-common/target/
-/hm-common/src/test/
+/foro-common/target/
+/foro-common/src/test/
 
-/hm-api/target/
+/foro-api/target/
 
 /pay-service/src/test/
 /pay-service/target/
@@ -40,7 +36,7 @@
 /item-service/src/main/resources/application-dev.yaml
 /item-service/src/main/resources/application-local.yaml
 
-/hm-gateway/target/
+/foro-gateway/target/
 
 # --- IDE / 编辑器 ---
 /.idea/

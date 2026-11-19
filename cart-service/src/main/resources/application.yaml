@@ -1,8 +1,8 @@
 server:
   port: 8082
-hm:
+foro:
   db:
-    database: hm-cart
+    database: foro-cart
     swagger:
       title: "坊市 Foro · 购物车服务接口文档"
-      package: com.hmall.cart.controller
+      package: com.foro.cart.controller

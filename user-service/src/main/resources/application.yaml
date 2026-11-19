@@ -1,14 +1,14 @@
 server:
   port: 8085
-hm:
+foro:
   jwt:
-    location: classpath:hmall.jks
-    alias: hmall
-    password: hmall123
+    location: classpath:foro.jks
+    alias: foro
+    password: foro123
     tokenTTL: 30m
   db:
-    database: hm-user
+    database: foro-user
     swagger:
       title: "坊市 Foro · 用户服务接口文档"
-      package: com.hmall.user.controller
-# keytool -genkeypair -alias hmall -keyalg RSA -keypass hmall123 -keystore hmall.jks -storepass hmall123
+      package: com.foro.user.controller
+# keytool -genkeypair -alias foro -keyalg RSA -keypass foro123 -keystore foro.jks -storepass foro123

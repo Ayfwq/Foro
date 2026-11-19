@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.heima</groupId>
-    <artifactId>hmall</artifactId>
+    <groupId>com.foro</groupId>
+    <artifactId>foro</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
-        <module>hm-common</module>
+        <module>foro-common</module>
         <module>item-service</module>
         <module>cart-service</module>
-        <module>hm-api</module>
+        <module>foro-api</module>
         <module>pay-service</module>
         <module>trade-service</module>
         <module>user-service</module>
-        <module>hm-gateway</module>
+        <module>foro-gateway</module>
     </modules>
 
     <parent>

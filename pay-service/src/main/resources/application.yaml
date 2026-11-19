@@ -1,8 +1,8 @@
 server:
   port: 8084
-hm:
+foro:
   db:
-    database: hm-pay
+    database: foro-pay
     swagger:
       title: "坊市 Foro · 支付服务接口文档"
-      package: com.hmall.pay.controller
+      package: com.foro.pay.controller

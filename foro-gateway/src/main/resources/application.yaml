@@ -1,0 +1,21 @@
+server:
+  port: 8080
+foro:
+  jwt:
+    location: classpath:foro.jks
+    alias: foro
+    password: foro123
+    tokenTTL: 30m
+  auth:
+    excludePaths:
+      - /search/**
+      - /users/login
+      - /items/**
+      - /hi
+      - /error
+      - /favicon.ico
+      - /v2/**
+      - /v3/**
+      - /swagger-resources/**
+      - /webjars/**
+      - doc.html

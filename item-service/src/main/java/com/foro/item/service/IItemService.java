@@ -1,0 +1,24 @@
+package com.foro.item.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.foro.api.dto.ItemDTO;
+import com.foro.api.dto.OrderDetailDTO;
+import com.foro.item.domain.po.Item;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * <p>
+ * 商品表 服务类
+ * </p>
+ *
+ * @author Ayfwq
+ * @since 2023-05-05
+ */
+public interface IItemService extends IService<Item> {
+
+    void deductStock(List<OrderDetailDTO> items);
+
+    List<ItemDTO> queryItemByIds(Collection<Long> ids);
+}

@@ -1,8 +1,8 @@
 server:
   port: 8083
-hm:
+foro:
   db:
-    database: hm-trade
+    database: foro-trade
     swagger:
       title: "坊市 Foro · 交易服务接口文档"
-      package: com.hmall.trade.controller
+      package: com.foro.trade.controller
