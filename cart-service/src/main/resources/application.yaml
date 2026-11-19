@@ -4,5 +4,5 @@ hm:
   db:
     database: hm-cart
     swagger:
-      title: "黑马商城购物车服务接口文档"
+      title: "坊市 Foro · 购物车服务接口文档"
       package: com.hmall.cart.controller

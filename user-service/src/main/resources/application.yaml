@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8085
 hm:
   jwt:
     location: classpath:hmall.jks
@@ -9,6 +9,6 @@ hm:
   db:
     database: hm-user
     swagger:
-      title: "黑马商城用户服务接口文档"
+      title: "坊市 Foro · 用户服务接口文档"
       package: com.hmall.user.controller
 # keytool -genkeypair -alias hmall -keyalg RSA -keypass hmall123 -keystore hmall.jks -storepass hmall123

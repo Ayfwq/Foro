@@ -11,7 +11,7 @@ import com.hmall.user.domain.vo.UserLoginVO;
  * 用户表 服务类
  * </p>
  *
- * @author 虎哥
+ * @author Ayfwq
  * @since 2023-05-05
  */
 public interface IUserService extends IService<User> {
