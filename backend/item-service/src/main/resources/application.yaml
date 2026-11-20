@@ -3,6 +3,6 @@ server:
 foro:
   db:
     database: foro-item
-    swagger:
-      title: "坊市 Foro · 商品服务接口文档"
-      package: item.controller
+  swagger:
+    title: "坊市 Foro · 商品服务接口文档"
+    package: com.foro.item.controller

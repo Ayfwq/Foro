@@ -3,6 +3,8 @@ server:
 foro:
   db:
     database: foro-cart
-    swagger:
-      title: "坊市 Foro · 购物车服务接口文档"
-      package: com.foro.cart.controller
+  cart:
+    maxItems: 100
+  swagger:
+    title: "坊市 Foro · 购物车服务接口文档"
+    package: com.foro.cart.controller

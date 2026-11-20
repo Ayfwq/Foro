@@ -3,6 +3,6 @@ server:
 foro:
   db:
     database: foro-pay
-    swagger:
-      title: "坊市 Foro · 支付服务接口文档"
-      package: com.foro.pay.controller
+  swagger:
+    title: "坊市 Foro · 支付服务接口文档"
+    package: com.foro.pay.controller

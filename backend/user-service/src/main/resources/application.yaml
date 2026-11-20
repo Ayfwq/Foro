@@ -8,7 +8,6 @@ foro:
     tokenTTL: 30m
   db:
     database: foro-user
-    swagger:
-      title: "坊市 Foro · 用户服务接口文档"
-      package: com.foro.user.controller
-# keytool -genkeypair -alias foro -keyalg RSA -keypass foro123 -keystore foro.jks -storepass foro123
+  swagger:
+    title: "坊市 Foro · 用户服务接口文档"
+    package: com.foro.user.controller

@@ -3,6 +3,6 @@ server:
 foro:
   db:
     database: foro-trade
-    swagger:
-      title: "坊市 Foro · 交易服务接口文档"
-      package: com.foro.trade.controller
+  swagger:
+    title: "坊市 Foro · 交易服务接口文档"
+    package: com.foro.trade.controller
