@@ -1,45 +1,6 @@
-/.idea/sqldialects.xml
-
-
-/logs/
-
-/note/
-
-
-/foro-common/target/
-/foro-common/src/test/
-
-/foro-api/target/
-
-/pay-service/src/test/
-/pay-service/target/
-/pay-service/src/main/resources/application-dev.yaml
-/pay-service/src/main/resources/application-local.yaml
-
-/user-service/src/test/
-/user-service/target/
-/user-service/src/main/resources/application-dev.yaml
-/user-service/src/main/resources/application-local.yaml
-
-/trade-service/src/test/
-/trade-service/target/
-/trade-service/src/main/resources/application-dev.yaml
-/trade-service/src/main/resources/application-local.yaml
-
-/cart-service/src/test/
-/cart-service/target/
-/cart-service/src/main/resources/application-local.yaml
-/cart-service/src/main/resources/application-dev.yaml
-
-/item-service/target/
-/item-service/src/test/
-/item-service/src/main/resources/application-dev.yaml
-/item-service/src/main/resources/application-local.yaml
-
-/foro-gateway/target/
-
 # --- IDE / 编辑器 ---
 /.idea/
+**/.idea/
 *.iml
 *.iws
 *.ipr
@@ -48,8 +9,14 @@
 **/target/
 *.class
 *.log
+/logs/
+/backend/logs/
 
-# --- 本地产物 / 工具缓存 ---
+# --- 本地私有配置 ---
+**/application-dev.yaml
+**/application-local.yaml
+
+# --- 工具缓存 ---
 /.workbuddy/
 .DS_Store
 Thumbs.db

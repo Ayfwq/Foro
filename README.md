@@ -26,6 +26,8 @@
 
 平台按电商交易域拆分为 6 个可独立部署的服务，配合 2 个公共模块，覆盖「商品浏览 → 加购 → 下单 → 支付 → 履约/关闭」的完整闭环。
 
+仓库分为两部分：`backend/` 是 Spring Cloud Alibaba 微服务后端，`front/` 是三套可直接运行的静态站点（商城前台、商品管理、运营控制台）。前端不依赖构建工具，由 nginx 托管并反向代理到网关。
+
 - **服务边界即数据边界**：每个服务独占一个数据库，跨库一致性由分布式事务保证，不共享表。
 - **统一入口**：所有外部请求经网关，鉴权、路由、用户上下文透传在网关一层完成。
 - **配置与注册集中管理**：服务发现与配置下发均由 Nacos 承担，配置支持热更新。
@@ -35,7 +37,7 @@
 
 ```mermaid
 flowchart TB
-    C["客户端 / 接口调试"] --> G["foro-gateway :8080<br/>JWT 鉴权 · 动态路由"]
+    C["浏览器 · front/portal<br/>nginx :18080"] --> G["foro-gateway :8080<br/>JWT 鉴权 · 动态路由"]
 
     subgraph 业务服务
         G --> I["item-service :8081<br/>商品 · 库存"]
@@ -220,11 +222,26 @@ Feign 客户端通过 `fallbackFactory` 提供降级实现，下游异常时返�
 
 ### 启动步骤
 
+**后端（`backend/`）**
+
 1. **初始化数据库**：创建 5 个库（`foro-item`、`foro-cart`、`foro-trade`、`foro-pay`、`foro-user`）并导入建表脚本。
 2. **配置 Nacos**：在 `DEFAULT_GROUP` 下建立共享配置（数据源、日志、Swagger、Sentinel、Feign、Seata、RabbitMQ 连接）与 `gateway-routes.json` 路由表。
 3. **修改注册中心地址**：各服务 `bootstrap.yml` 中的 `spring.cloud.nacos.server-addr` 指向自己的 Nacos 实例。
-4. **按顺序启动**：`foro-gateway` 之外的业务服务可并行启动，最后启动网关；网关启动时会拉取已注册的服务列表。
+4. **按顺序启动**：在 `backend/` 目录下执行 `mvn -pl foro-common,foro-api -am install` 后启动各服务，`foro-gateway` 最后启动；网关启动时会拉取已注册的服务列表。
 5. **验证**：访问 `http://localhost:8080/doc.html` 查看聚合文档，或直接调用 `http://localhost:8080/search/list?key=手机`。
+
+**前端（`front/`）**
+
+1. 把 `front/nginx.conf` 复制到 nginx 的 `conf/` 目录，将其中的 `__FRONT_DIR__` 替换为 `front/` 的绝对路径（如 `D:/JavaWebCode/foro/front`）。
+2. 启动 nginx，访问下列站点：
+
+| 站点 | 地址 | 目录 |
+|---|---|---|
+| 商城前台 | `http://localhost:18080` | `front/portal` |
+| 商品与用户管理 | `http://localhost:18081` | `front/admin` |
+| 运营控制台 | `http://localhost:18082` | `front/console` |
+
+3. 页面所有请求走 `/api/**`，由 nginx 去掉前缀转发到 `localhost:8080`（即网关），因此后端未启动时页面可以打开但数据为空。
 
 > 网关的 JWT 密钥库随仓库提供（`foro-gateway/src/main/resources/foro.jks`），仅供本地演示使用；部署到生产环境请替换为自有密钥并通过环境变量注入口令。
 
@@ -232,20 +249,27 @@ Feign 客户端通过 `fallbackFactory` 提供降级实现，下游异常时返�
 
 ```
 foro/
-├── foro-gateway/               # 网关：鉴权、路由、跨域
-│   └── src/main/java/com/foro/gateway/
-│       ├── filters/          # AuthGlobalFilter 全局鉴权
-│       ├── routers/          # DynamicRouteLoader 动态路由
-│       └── config/           # JWT / 白名单配置
-├── item-service/             # 商品服务
-├── cart-service/             # 购物车服务
-├── trade-service/            # 交易服务
-│   └── src/main/java/com/foro/trade/listenter/   # 延迟关单、支付回调
-├── pay-service/              # 支付服务
-├── user-service/             # 用户服务
-├── foro-api/                   # Feign 客户端 + DTO + 降级工厂
-├── foro-common/                # 统一响应、异常、拦截器、MyBatis/MQ 配置
-└── pom.xml                   # 聚合 POM，统一版本管理
+├── front/                        # 前端：三套静态站点，无需构建
+│   ├── portal/                   # 商城前台：首页 / 搜索 / 购物车 / 下单 / 支付
+│   ├── admin/                    # 商品与用户管理
+│   ├── console/                  # 运营控制台（含 ECharts 看板）
+│   ├── nginx.conf                # 三站点托管 + /api 反向代理
+│   └── README.md                 # 前端说明
+├── backend/                      # 后端微服务
+│   ├── pom.xml                   # 聚合 POM，统一版本管理
+│   ├── foro-gateway/             # 网关：鉴权、路由、跨域
+│   │   └── src/main/java/com/foro/gateway/
+│   │       ├── filters/          # AuthGlobalFilter 全局鉴权
+│   │       ├── routers/          # DynamicRouteLoader 动态路由
+│   │       └── config/           # JWT / 白名单配置
+│   ├── item-service/             # 商品服务
+│   ├── cart-service/             # 购物车服务
+│   ├── trade-service/            # 交易服务（延迟关单、支付回调）
+│   ├── pay-service/              # 支付服务
+│   ├── user-service/             # 用户服务
+│   ├── foro-api/                 # Feign 客户端 + DTO + 降级工厂
+│   └── foro-common/              # 统一响应、异常、拦截器、MyBatis/MQ 配置
+└── README.md
 ```
 
 ## 后续演进

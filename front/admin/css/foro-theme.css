@@ -1,0 +1,27 @@
+/* 坊市 Foro — 管理端主题覆盖 */
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    color: #1f2937;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #0f766e;
+    margin: 18px 0 14px;
+}
+
+.el-button--primary {
+    background-color: #0d9488;
+    border-color: #0d9488;
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+    background-color: #0f766e;
+    border-color: #0f766e;
+}
+
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #0d9488;
+}
